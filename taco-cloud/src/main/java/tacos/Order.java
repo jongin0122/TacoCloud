@@ -24,7 +24,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name="Taco_Order")		//Order 개체가 데이터베이스의 Taco_Order 테이블에 저장되어야 한다는 것을 나타낸다.
-								//이 어노테이션이 없다면 JPA가 Order라는 이름의 테이블로 Order개체를 저장할 것이다. 
+								//이 어노테이션이 없다면 JPA가 Order라는 이름의 테이블로 Order개체를 저장할 것이다..
 public class Order implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
