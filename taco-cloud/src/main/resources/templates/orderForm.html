@@ -8,11 +8,18 @@
   </head>
   <body>
 	
-	<form method="POST" th:action="@{/orders}" th:object="${order}">		<!-- 액션이 지정되지 않았다면 폼에 나타났던 것과 같은 URL로 폼의 HTTP POST 요청이 제출될 것이다 -->
+	<form method="POST" th:action="@{/logout}" id="logoutForm">
+		<input type="submit" value="Logout"/>
+	</form>
+	
+	<form method="POST" th:action="@{/orders}" th:object="${order}" id="orderForm">		<!-- 액션이 지정되지 않았다면 폼에 나타났던 것과 같은 URL로 폼의 HTTP POST 요청이 제출될 것이다 -->
 																			<!-- 하지만 여기서는 /orders 경로로 제추되도록 하고 있다. -->
 		<h1>Order your taco creations!</h1>
 		
 		<img th:src="@{/images/TacoCloud.png}" /> 
+		
+		<h3>Your tocos in this order:</h3>
+		
 		<a th:href="@{/design}"	id="another">Design another taco</a><br />
 		
 		<ul>

@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
+import javax.persistence.ManyToOne;
 
 import lombok.Data;
 import java.util.Date;
@@ -31,6 +32,9 @@ public class Order implements Serializable{
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	private Date placedAt;
+	
+	@ManyToOne
+	private User user;  //한 건의 주문이 한 명의 사용자에 속한다는 것을 나타낸다. 반대로 한 명의 사용자는 여러 주문을 가질 수 있다.
 	
 	@NotBlank(message="Name is required")
 	private String deliveryName;

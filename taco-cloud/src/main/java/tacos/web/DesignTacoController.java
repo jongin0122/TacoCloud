@@ -12,10 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import java.security.Principal;
+
+import tacos.data.UserRepository;
 import tacos.data.IngredientRepository;
 import tacos.data.TacoRepository;
 import tacos.Order;
 import tacos.Taco;
+import tacos.User;
 
 import lombok.extern.slf4j.Slf4j;
 import tacos.Ingredient;
@@ -32,17 +36,19 @@ public class DesignTacoController {
 	private final IngredientRepository ingredientRepo;
 	
 	private TacoRepository tacoRepo;
+	private UserRepository userRepo;
 	
 	@Autowired
-	public DesignTacoController(IngredientRepository ingredientRepo, TacoRepository tacoRepo) {
+	public DesignTacoController(IngredientRepository ingredientRepo, TacoRepository tacoRepo, UserRepository userRepo) {
 		this.ingredientRepo = ingredientRepo;
 		this.tacoRepo = tacoRepo;
+		this.userRepo = userRepo;
 		//생성자에서 위의 두개의 객체 모두를 인자로 받는다. 그리고 showDesignForm()과 processDesign() 메서드에서 사용할 수 있도록 두 인자 모두 인스턴스 변수에 지정한다.
 	}
 	
 						//예전에는 @ReqeustMapping(method=RequestMethod.GET) 으로 표기하였다. 
 	@GetMapping			// /design의 HTTP GET 요청이 수신될 때 그 요청을 처리하기 위해 showDesignForm() 메서드가 호출됨을 나타낸다. 
-	public String showDesignForm(Model model) {
+	public String showDesignForm(Model model, Principal principal) {
 			
 		List<Ingredient> ingredients = new ArrayList<>();
 		ingredientRepo.findAll().forEach(i->ingredients.add(i));	//이 findAll()메소드를 showDesignForm() 메서드에서 호출
@@ -52,8 +58,15 @@ public class DesignTacoController {
 			model.addAttribute(type.toString().toLowerCase(), filterByType(ingredients,type));
 		}
 		
-		model.addAttribute("taco", new Taco());		//Model은 컨트롤러와 데이터를 보여주는 뷰 사이에서 데이터를 운반하는 객체이다. 
-													//궁극적으로 Model 객체의 속성에 있는 데이터는 뷰가 알 수 있는 서블릿요청 속성들로 복사된다.
+		/*
+		 * model.addAttribute("taco", new Taco()); //Model은 컨트롤러와 데이터를 보여주는 뷰 사이에서 데이터를
+		 * 운반하는 객체이다. //궁극적으로 Model 객체의 속성에 있는 데이터는 뷰가 알 수 있는 서블릿요청 속성들로 복사된다.
+		 */		
+		
+		String username= principal.getName();
+		User user = userRepo.findByUsername(username);
+		model.addAttribute("user", user);
+		
 		return "design";		//design 뷰 반환
 	}
 	
