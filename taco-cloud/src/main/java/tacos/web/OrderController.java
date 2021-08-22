@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 
 import lombok.extern.slf4j.Slf4j;
 import tacos.Order;
@@ -20,13 +23,17 @@ import tacos.data.OrderRepository;
 @Slf4j
 @Controller
 @SessionAttributes("order")
+
 @RequestMapping("/orders")			// /orders로 시작되는 경로의 요청 처리 메서드가 처리한다는 것을 알려주는 클래스 수준의 어노테이션이다.
 public class OrderController {
 	
 	private OrderRepository orderRepo;
+
+	private OrderProps props;
 	
-	public OrderController(OrderRepository orderRepo) {
+	public OrderController(OrderRepository orderRepo, OrderProps props) {
 		this.orderRepo = orderRepo;
+		this.props = props;
 	}
 	
 									//예전에는 @ReqeustMapping(method=RequestMethod.GET) 으로 표기하였다.
@@ -50,6 +57,7 @@ public class OrderController {
 		return "orderForm";
 	}
 	
+	
 	@PostMapping
 	public String processOrder(@Valid Order order, Errors errors, SessionStatus sessionStatus, @AuthenticationPrincipal User user) {
 		if(errors.hasErrors()) {
@@ -62,5 +70,15 @@ public class OrderController {
 		sessionStatus.setComplete();
 		
 		return "redirect:/";
+	}
+	
+	@GetMapping
+	public String ordersForUser(
+			@AuthenticationPrincipal User user, Model model) {
+		
+		Pageable pageable = PageRequest.of(0, props.getPageSize());
+		model.addAttribute("orders",
+				orderRepo.findByUserOrderByPlacedAtDesc(user,pageable));
+		return "orderList";
 	}
 }
